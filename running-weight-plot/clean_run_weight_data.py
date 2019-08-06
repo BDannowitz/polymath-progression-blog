@@ -13,7 +13,18 @@ RUN_COLS = ['Date', 'Name', 'Description', 'Distance', 'Pace',
 
 
 def decimal_minute_to_time(dec_minutes):
-    """Converts decimal minutes to MM:SS format."""
+    """Converts decimal minutes to MM:SS format.
+    
+    Parameters
+    ----------
+    dec_minutes : float
+        Time in minutes
+        
+    Returns
+    -------
+    str
+    
+    """
     hour = floor(dec_minutes / 60)
     minute = int(dec_minutes % 60)
     sec = int(60 * (dec_minutes - int(dec_minutes)))
@@ -27,7 +38,23 @@ def decimal_minute_to_time(dec_minutes):
 
 
 def time_to_decimal_minute(time_str):
-    """Converts MM:SS or HH:MM:SS string to decimal minute format."""
+    """Converts MM:SS or HH:MM:SS string to decimal minute format.
+    
+    Parameters
+    ----------
+    time_str : str
+        Time in "MM:SS" or "HH:MM:SS" format
+        
+    Returns
+    -------
+    float
+    
+    Raises
+    ------
+    ValueError
+        For poorly formatted string.
+    
+    """
     time_list = time_str.split(":")
     minute, second = int(time_list[-2]), int(time_list[-1])
     if len(time_list) == 3:
@@ -116,17 +143,17 @@ def combine_runs(df_list, run_cols=RUN_COLS):
     return run_df
 
 def main():
-    strava = process_strava('strava-activities.csv')
-    runkeeper = process_runkeeper('runkeeper-activities.csv')
+    strava = process_strava('data/raw/strava-activities.csv')
+    runkeeper = process_runkeeper('data/raw/runkeeper-activities.csv')
     
-    mfp = process_mfp_weight('myfitnesspal-export.csv')
-    weight_gurus = process_weight_gurus('weight-gurus-history.csv')
+    mfp = process_mfp_weight('data/raw/myfitnesspal-export.csv')
+    weight_gurus = process_weight_gurus('data/raw/weight-gurus-history.csv')
     
     run_df = combine_runs([strava, runkeeper])
     weight_df = combine_weights([mfp, weight_gurus])
     
-    run_df.to_csv('run.csv')
-    weight_df.to_csv('weight.csv')
+    run_df.to_csv('data/processed/run.csv')
+    weight_df.to_csv('data/processed/weight.csv')
 
 if __name__ == "__main__":
     print("processing data beep boop bonk")
