@@ -158,7 +158,7 @@ def make_viz(run_df, weight_df, poly_df, output_filename):
         {'x': [new_house, kc_half_train, tendonitis_IF, tendonitis_IF],
          'y': [182, 223, 184.5, 181],
          'text': ["New House", "Start KC Half Marathon Training",
-                  "Achilles Tendonitis", "Started 19:8 IF"]}
+                  "Achilles Tendonitis", "Started 16:8 IF"]}
     )
     p.add_layout(
         LabelSet(
