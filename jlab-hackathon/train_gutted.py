@@ -79,53 +79,53 @@ STEP_SIZE_VALID = len(validdf)/BS
 # (used for both training and validation samples)
 def generate_arrays_from_file( path, labelsdf ):
 
-	images_path = path+'/images.raw.gz'
-	print( 'generator created for: ' + images_path)
+    images_path = path+'/images.raw.gz'
+    print( 'generator created for: ' + images_path)
 
-	batch_input           = []
-	batch_labels_phi      = []
-	batch_labels_z        = []
-	idx = 0
-	ibatch = 0
-	while True:  # loop forever, re-reading images from same file
-		with gzip.open(images_path) as f:
-			while True: # loop over images in file
-			
-				# Read in one image
-				bytes = f.read(width*height)
-				if len(bytes) != (width*height): break # break into outer loop so we can re-open file
-				data = np.frombuffer(bytes, dtype='B', count=width*height)
-				pixels = np.reshape(data, [width, height, 1], order='F')
-				pixels_norm = np.transpose(pixels.astype(np.float) / 255., axes=(1, 0, 2) )
-				
-				# Labels
-				phi = labelsdf.phi[idx]
-				z   = labelsdf.z[idx]
-				idx += 1
+    batch_input           = []
+    batch_labels_phi      = []
+    batch_labels_z        = []
+    idx = 0
+    ibatch = 0
+    while True:  # loop forever, re-reading images from same file
+        with gzip.open(images_path) as f:
+            while True: # loop over images in file
+            
+                # Read in one image
+                bytes = f.read(width*height)
+                if len(bytes) != (width*height): break # break into outer loop so we can re-open file
+                data = np.frombuffer(bytes, dtype='B', count=width*height)
+                pixels = np.reshape(data, [width, height, 1], order='F')
+                pixels_norm = np.transpose(pixels.astype(np.float) / 255., axes=(1, 0, 2) )
+                
+                # Labels
+                phi = labelsdf.phi[idx]
+                z   = labelsdf.z[idx]
+                idx += 1
 
-				# Add to batch and check if it is time to yield
-				batch_input.append( pixels_norm )
-				batch_labels_phi.append( phi )
-				batch_labels_z.append( z )
-				if len(batch_input) == BS :
-					ibatch += 1
-					
-					# Since we are training multiple loss functions we must
-					# pass the labels back as a dictionary whose keys match
-					# the layer their corresponding values are being applied
-					# to.
-					labels_dict = {
-						'phi_output' :  np.array(batch_labels_phi ),
-						'z_output'   :  np.array(batch_labels_z   ),		
-					}
-					
-					yield ( np.array(batch_input), labels_dict )
-					batch_input      = []
-					batch_labels_phi = []
-					batch_labels_z   = []
+                # Add to batch and check if it is time to yield
+                batch_input.append( pixels_norm )
+                batch_labels_phi.append( phi )
+                batch_labels_z.append( z )
+                if len(batch_input) == BS :
+                    ibatch += 1
+                    
+                    # Since we are training multiple loss functions we must
+                    # pass the labels back as a dictionary whose keys match
+                    # the layer their corresponding values are being applied
+                    # to.
+                    labels_dict = {
+                        'phi_output' :  np.array(batch_labels_phi ),
+                        'z_output'   :  np.array(batch_labels_z   ),        
+                    }
+                    
+                    yield ( np.array(batch_input), labels_dict )
+                    batch_input      = []
+                    batch_labels_phi = []
+                    batch_labels_z   = []
 
-			idx = 0
-			f.close()
+            idx = 0
+            f.close()
 
 
 #-----------------------------------------------------
@@ -134,26 +134,26 @@ def generate_arrays_from_file( path, labelsdf ):
 # This is used to define the model. It is only called if no model
 # file is found in the model_checkpoints directory.
 def DefineModel():
-	
-	# If GPUS==0 this will force use of CPU, even if GPUs are present
-	# If GPUS>1 this will force the CPU to serve as orchestrator
-	# If GPUS==1 this will do nothing, allowing GPU to act as its own orchestrator
-	if GPUS!=1: tf.device('/cpu:0')
+    
+    # If GPUS==0 this will force use of CPU, even if GPUs are present
+    # If GPUS>1 this will force the CPU to serve as orchestrator
+    # If GPUS==1 this will do nothing, allowing GPU to act as its own orchestrator
+    if GPUS!=1: tf.device('/cpu:0')
 
-	# Here we build the network model.
-	# This model is made of multiple parts. The first handles the
-	# inputs and identifies common features. The rest are branches with
-	# each determining an output parameter from those features.
-	inputs      = Input(shape=(height, width, 1), name='image_inputs')
+    # Here we build the network model.
+    # This model is made of multiple parts. The first handles the
+    # inputs and identifies common features. The rest are branches with
+    # each determining an output parameter from those features.
+    inputs      = Input(shape=(height, width, 1), name='image_inputs')
 
-	if GPUS<=1 :
-		final_model = model
-	else:
-		final_model = multi_gpu_model( model, gpus=GPUS )
+    if GPUS<=1 :
+        final_model = model
+    else:
+        final_model = multi_gpu_model( model, gpus=GPUS )
 
-	final_model.compile(loss=losses, loss_weights=lossWeights, optimizer=opt, metrics=['mae', 'mse', 'accuracy'])
-	
-	return final_model
+    final_model.compile(loss=losses, loss_weights=lossWeights, optimizer=opt, metrics=['mae', 'mse', 'accuracy'])
+    
+    return final_model
 
 model = DefineModel()
 
