@@ -44,7 +44,7 @@ def load_test_data(filename, cols=COLS):
     
     """
     with open(filename, 'r') as f:
-        data_str = f.read()
+        data_str = f.read().replace(' ', '')
     
     data_str_io = StringIO(
         re.sub(r"([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\n)", r",,\1",
@@ -146,12 +146,12 @@ def test_to_time_series(X):
     """
     X_ts_list = []
     for ix in range(len(X)):
-        seq_len = get_test_detector_plane(X.iloc[ix])
+        seq_len = get_test_detector_plane(X.iloc[ix])     
         track = X.iloc[ix].values.reshape(N_DETECTORS, N_KINEMATICS)
         X_ts_list.append(track[0:seq_len])
         
     # Pad the training sequence
-    X_ts_list = pad_sequences(X_ts_list, dtype=float)
+    X_ts_list = pad_sequences(X_ts_list, maxlen=(N_DETECTORS-1), dtype=float)
     X_ts_array = np.array(X_ts_list)
     
     return X_ts_array
