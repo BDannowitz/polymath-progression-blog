@@ -5,7 +5,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import GRU, Dense, LeakyReLU, Dropout
 from tensorflow.keras.activations import relu
 from tensorflow.keras.callbacks import EarlyStopping
-from jlab import load_train_test, N_KINEMATICS, N_DETECTORS
+from jlab import load_train_test, N_KINEMATICS, N_DETECTORS, N_FEATURES
 
 
 def lrelu(x):
@@ -38,7 +38,7 @@ def gru_model(gru_units=35, dense_units=100,
     model = Sequential()
     
     model.add(GRU(gru_units, activation=lrelu,
-                  input_shape=(N_DETECTORS-1, N_KINEMATICS),
+                  input_shape=(N_DETECTORS-1, N_FEATURES),
                   return_sequences=True))
     model.add(GRU(gru_units, activation=lrelu,
                   return_sequences=True))
@@ -46,7 +46,7 @@ def gru_model(gru_units=35, dense_units=100,
     
     model.add(Dense(dense_units, activation=lrelu))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(N_KINEMATICS-1))
+    model.add(Dense(N_KINEMATICS-1, activation='linear'))
     
     model.compile(loss='mse', optimizer='adam')
     
