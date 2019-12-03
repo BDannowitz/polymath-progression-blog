@@ -109,7 +109,7 @@ def train(frac, filename, epochs=50, gru_units=35,
     
 if __name__ == "__main__":
 
-    train(frac=1.0, filename="dannowitz_jlab2_model_20191031", epochs=100,
+    train(frac=1.0, filename="../models/dannowitz_jlab2_model_20191031", epochs=100,
           gru_units=35)
     
     train_report = """

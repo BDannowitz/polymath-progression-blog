@@ -164,11 +164,14 @@ def train_to_time_series(X):
         track_len = np.random.choice(range(8, 25))
         # Reshape into ts-like
         track = X.iloc[ix].values.reshape(N_DETECTORS, N_KINEMATICS)
-        eng_track = np.zeros(shape=(N_DETECTORS, N_FEATURES))
-        for i in range(0, N_DETECTORS):
-            eng_track[i] = get_detector_meta(track[i], i)
+
+        #eng_track = np.zeros(shape=(N_DETECTORS, N_FEATURES))
+        #for i in range(0, N_DETECTORS):
+        #    eng_track[i] = get_detector_meta(track[i], i)
         # Truncate the track to only N detectors
-        X_ts_list.append(eng_track[0:track_len])
+        #X_ts_list.append(eng_track[0:track_len])
+
+        X_ts_list.append(track[0:track_len])
         # Store the kinematics of the next in the sequence
         # Ignore the 3rd one, which is z
         y_array[ix] = track[track_len][[0,1,3,4,5]]
@@ -199,11 +202,11 @@ def test_to_time_series(X):
     for ix in range(len(X)):
         seq_len = get_test_detector_plane(X.iloc[ix])     
         track = X.iloc[ix].values.reshape(N_DETECTORS, N_KINEMATICS)
-        eng_track = np.zeros(shape=(N_DETECTORS, N_FEATURES))
-        for i in range(0, seq_len):
-            eng_track[i] = get_detector_meta(track[i], i)
+        #eng_track = np.zeros(shape=(N_DETECTORS, N_FEATURES))
+        #for i in range(0, seq_len):
+        #    eng_track[i] = get_detector_meta(track[i], i)
         # Truncate the track to only N detectors
-        X_ts_list.append(eng_track[0:seq_len])
+        X_ts_list.append(track[0:seq_len])
         
     # Pad the training sequence
     X_ts_list = pad_sequences(X_ts_list, maxlen=(N_DETECTORS-1), dtype=float)

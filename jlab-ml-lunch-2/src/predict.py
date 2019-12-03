@@ -38,9 +38,9 @@ def predict(model_filename, data_filename,
 
 
 if __name__ == "__main__":
-    predict(model_filename="dannowitz_jlab2_model_20191031.h5",
-            data_filename="MLchallenge2_testing_inputs.csv",
-            output_filename="dannowitz_jlab2_submission_20191112.csv")
-    predict(model_filename="dannowitz_jlab2_model_20191031.h5",
-            data_filename="test_in.csv",
-            output_filename="dannowitz_jlab2_submission_test.csv")
+    predict(model_filename="../models/dannowitz_jlab2_model_20191031.h5",
+            data_filename="../data/MLchallenge2_testing_inputs.csv",
+            output_filename="../data/submissions/dannowitz_jlab2_submission_20191112.csv")
+    predict(model_filename="../models/dannowitz_jlab2_model_20191031.h5",
+            data_filename="../data/test_in.csv",
+            output_filename="../data/submissions/dannowitz_jlab2_submission_test.csv")
